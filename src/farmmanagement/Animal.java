@@ -4,6 +4,8 @@
  */
 package farmmanagement;
 
+import java.util.Random;
+
 public class Animal {
     private int id;
     private String type;
@@ -11,7 +13,8 @@ public class Animal {
     private int age;
     private String product;
     private int product_status;
-
+    private int deliveryTimeRan;
+    private int yasamSuresi;
     public Animal(int id, String type, String gender, int age, String product, int product_status) {
         this.id=id;
         this.type = type;
@@ -19,6 +22,10 @@ public class Animal {
         this.age = age;
         this.product = product;
         this.product_status = product_status;
+        Random delivery=new Random();
+        //this.deliveryTimeRan=delivery.nextInt(4)+1; 
+        this.deliveryTimeRan = 1;
+        this.yasamSuresi = delivery.nextInt(1000) +100;  
     }
 
    
@@ -70,7 +77,16 @@ public class Animal {
     public void setProduct_status(int product_status) {
         this.product_status = product_status;
     }
-            
     
+    public void addProduct(int product){
+        this.product_status += product;
+    }
+     
+    public int getDeliveryTimeRandom(){
+        return this.deliveryTimeRan;
+    }
+    public int getYasamSuresi(){
+        return this.yasamSuresi;
+    }
     
 }

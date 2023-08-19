@@ -26,6 +26,7 @@ public class AnimalTransactions {
     private PreparedStatement preparedStatement=null;
     public ArrayList<Animal> bringAnimals() {
     ArrayList<Animal> cikti=new ArrayList<Animal>();
+    
         try {
             statement = con.createStatement();
             String query= "Select * From animal";
@@ -69,10 +70,7 @@ public class AnimalTransactions {
             //ex.printStackTrace();
         }
 }
-    public static void main(String[] args) {
-        AnimalTransactions transaction= new AnimalTransactions();
-        
-    }
+    
     public void addAnimal(String type,String gender ,String age,String product,String productionstatus){
             String query="Insert Into animal (type,gender,age,product,productionstatus) VALUES(?,?,?,?,?)";
         try {
@@ -89,6 +87,7 @@ public class AnimalTransactions {
             Logger.getLogger(AnimalTransactions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
     public void deleteAnimal(int id){
     String query ="Delete from animal where id= ?";
         try {

@@ -6,9 +6,13 @@ package farmmanagement;
 
 import com.mysql.cj.jdbc.PreparedStatementWrapper;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+
 
 /**
  *
@@ -17,6 +21,7 @@ import javax.swing.table.TableRowSorter;
 public class AnimalScreen extends javax.swing.JDialog {
     DefaultTableModel model;
     AnimalTransactions transaction=new AnimalTransactions();
+    FarmCase farmCase = new FarmCase();
     /**
      * Creates new form AnimalScreen
      */
@@ -25,6 +30,49 @@ public class AnimalScreen extends javax.swing.JDialog {
         initComponents();
         model=(DefaultTableModel)animalTable.getModel();
         viewAnimal();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() { 
+            Long startTime = System.currentTimeMillis();
+               for (int i=0;i<1000;i++){
+                   System.out.println("Threde girdim.");
+                    try {
+                        Thread.sleep(1000);
+                        for(Animal a : transaction.bringAnimals()){
+                            System.out.println("Ben i :" + i);
+                            a.setProduct_status(1+a.getProduct_status());
+                            if(a.getYasamSuresi() < (System.currentTimeMillis()-startTime)/1000){
+                                transaction.deleteAnimal(a.getId());
+                                System.out.println(a.getId() + " " +a.getYasamSuresi()); 
+                                viewAnimal();
+                            }
+                            System.out.println(a.getProduct_status());
+                            System.out.println(farmCase.getMilk());
+                            if(a.getProduct_status() > (100*a.getDeliveryTimeRandom())){
+                             farmCase.setMilk(i);
+                              System.out.println("Kasamdaki süt sayısı : " + farmCase.getMilk());
+                            if(a.getType().equals("Cow")){
+                                
+                            }
+                             a.setProduct_status(1);
+                        }
+                        }
+                    } catch (Exception ex) {
+                        System.out.println("HATAAA!" + ex.getMessage());
+                        Logger.getLogger(ProgressBarScreen.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                
+                }
+            }
+          
+        
+        
+       
+        
+        
+    });
+        t.start();
+        
     }
 
     /**
@@ -52,6 +100,7 @@ public class AnimalScreen extends javax.swing.JDialog {
         productStatusLabel = new javax.swing.JLabel();
         productStatusLine = new javax.swing.JTextField();
         deleteAnimal = new javax.swing.JButton();
+        informationButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -121,11 +170,18 @@ public class AnimalScreen extends javax.swing.JDialog {
             }
         });
 
+        informationButton.setText("Detaylı Bilgi");
+        informationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                informationButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -158,7 +214,8 @@ public class AnimalScreen extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(addAnimal, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
-                                    .addComponent(deleteAnimal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(deleteAnimal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(informationButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(40, 40, 40))))))
         );
         layout.setVerticalGroup(
@@ -179,16 +236,18 @@ public class AnimalScreen extends javax.swing.JDialog {
                     .addComponent(genderLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(deleteAnimal))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(ageLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(ageLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(informationButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(productLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(productStatusLabel)
                     .addComponent(productStatusLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -226,6 +285,25 @@ public class AnimalScreen extends javax.swing.JDialog {
         viewAnimal();
         
     }//GEN-LAST:event_deleteAnimalActionPerformed
+
+    private void informationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_informationButtonActionPerformed
+            int selectedRow=animalTable.getSelectedRow();
+            int deliveryTime= (int) model.getValueAt(selectedRow, 5);
+            Animal animal = transaction.bringAnimals().get(selectedRow);
+            //System.out.println(transaction.bringAnimals().get(selectedRow).getAge());
+           
+            //System.out.println(deliveryTime);
+           ProgressBarScreen progressbar1 = new ProgressBarScreen(animal);
+            
+            setVisible(false);
+            
+            //progressbar1.setVisible(true);
+            //InformationPage.fill(deliveryTime);
+            
+            progressbar1.setVisible(true);
+            
+                // TODO add your handling code here:
+    }//GEN-LAST:event_informationButtonActionPerformed
     
     /**
      * @param args the command line arguments
@@ -243,44 +321,7 @@ public class AnimalScreen extends javax.swing.JDialog {
         }
     
     }
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AnimalScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AnimalScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AnimalScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AnimalScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                AnimalScreen dialog = new AnimalScreen(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addAnimal;
@@ -288,6 +329,7 @@ public class AnimalScreen extends javax.swing.JDialog {
     private javax.swing.JTable animalTable;
     private javax.swing.JButton deleteAnimal;
     private javax.swing.JTextField genderLine;
+    private javax.swing.JButton informationButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
