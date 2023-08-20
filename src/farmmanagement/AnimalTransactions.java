@@ -24,6 +24,7 @@ public class AnimalTransactions {
     private Connection con =null;
     private Statement statement = null;
     private PreparedStatement preparedStatement=null;
+    
     public ArrayList<Animal> bringAnimals() {
     ArrayList<Animal> cikti=new ArrayList<Animal>();
     
@@ -39,6 +40,7 @@ public class AnimalTransactions {
                 int product_status=rs.getInt("productionstatus");
                 String product=rs.getString("product");
                 cikti.add(new Animal(id,type, gender, age, product, product_status));
+                
             }
             return cikti;
         } catch (SQLException ex) {
@@ -71,11 +73,11 @@ public class AnimalTransactions {
         }
 }
     
-    public void addAnimal(String type,String gender ,String age,String product,String productionstatus){
+    public boolean addAnimal(String type,String gender ,String age,String product,String productionstatus){
             String query="Insert Into animal (type,gender,age,product,productionstatus) VALUES(?,?,?,?,?)";
         try {
             preparedStatement= con.prepareStatement(query);
-            
+     
             preparedStatement.setString(1, type);
             preparedStatement.setString(2, gender);
             preparedStatement.setString(3, age);
@@ -84,8 +86,11 @@ public class AnimalTransactions {
             
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(AnimalTransactions.class.getName()).log(Level.SEVERE, null, ex);
+            
+            System.out.println("Tekrar deneyiniz bilgilerden en az bir tanesi hatalı.");
+            return false;
         }
+        return true;
     }
     
     public void deleteAnimal(int id){
@@ -94,11 +99,24 @@ public class AnimalTransactions {
             preparedStatement=con.prepareStatement(query);
             preparedStatement.setInt(1, id);
             preparedStatement.executeLargeUpdate();
+         
         } catch (SQLException ex) {
             Logger.getLogger(AnimalTransactions.class.getName()).log(Level.SEVERE, null, ex);
         }
  }
-
+    public void updateAnimal(int id,int productionstatus){
+    String query ="Update animal set productionstatus = ? where id= ?";
+        try {
+            preparedStatement=con.prepareStatement(query);
+            
+            preparedStatement.setInt(1, productionstatus);
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+         
+        } catch (SQLException ex) {
+            Logger.getLogger(AnimalTransactions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+ }
   
     
 }

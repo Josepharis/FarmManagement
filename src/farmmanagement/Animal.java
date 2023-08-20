@@ -15,6 +15,8 @@ public class Animal {
     private int product_status;
     private int deliveryTimeRan;
     private int yasamSuresi;
+    private int uretimSayisi;
+    private static int totalCount=0;
     public Animal(int id, String type, String gender, int age, String product, int product_status) {
         this.id=id;
         this.type = type;
@@ -25,7 +27,9 @@ public class Animal {
         Random delivery=new Random();
         //this.deliveryTimeRan=delivery.nextInt(4)+1; 
         this.deliveryTimeRan = 1;
-        this.yasamSuresi = delivery.nextInt(1000) +100;  
+        this.yasamSuresi = delivery.nextInt(50) +10 + (int) System.currentTimeMillis()/1000;  
+        this.uretimSayisi=0;
+        totalCount++;
     }
 
    
@@ -87,6 +91,10 @@ public class Animal {
     }
     public int getYasamSuresi(){
         return this.yasamSuresi;
+    }
+    
+    public static int getTotalCount(){
+        return totalCount;
     }
     
 }

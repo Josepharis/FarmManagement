@@ -21,41 +21,85 @@ import javax.swing.table.TableRowSorter;
 public class AnimalScreen extends javax.swing.JDialog {
     DefaultTableModel model;
     AnimalTransactions transaction=new AnimalTransactions();
-    FarmCase farmCase = new FarmCase();
+    
+    FarmCase farmCase = FarmCase.getFarmCase();
+     ArrayList<Animal> animals= new ArrayList<Animal>();
+    
+    static boolean key = true;
     /**
      * Creates new form AnimalScreen
      */
-    public AnimalScreen(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public AnimalScreen() {
+        //super(parent, modal);
         initComponents();
         model=(DefaultTableModel)animalTable.getModel();
-        viewAnimal();
+        animals=transaction.bringAnimals();
+        viewAnimal(animals);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() { 
             Long startTime = System.currentTimeMillis();
                for (int i=0;i<1000;i++){
-                   System.out.println("Threde girdim.");
+                   if(key == true){
+                       
+                              cashcount.setText(FarmCase.getCash()+"TL");
+                                setVisible(true);
+                            }
+                    try {
+                        Thread.sleep(4000);
+                        for(Animal a : animals){
+                            a.addProduct(1);
+                            System.out.println("Projuct :" + a.getProduct_status());
+                            transaction.updateAnimal(a.getId(),a.getProduct_status());
+                            Thread.sleep(10);
+                            if(a.getYasamSuresi() < (System.currentTimeMillis()-startTime)/1000){
+                                transaction.deleteAnimal(a.getId());
+                                animals.clear();
+                                animals=transaction.bringAnimals();
+                                viewAnimal(animals);
+                            }
+                          
+                        }
+                    } catch (Exception ex) {
+                        System.out.println("HATAAA!" + ex.getMessage());
+                        Logger.getLogger(ProgressBarScreen.class.getName()).log(Level.SEVERE, null, ex);
+                    } finally{
+                        if(i%4 == 0){
+                         animals.clear();
+                         animals=transaction.bringAnimals();
+                         viewAnimal(animals);
+                        }
+                        
+                    }
+                
+                }
+            }
+          
+        
+        
+       
+        
+        
+    });
+        /*
+       Thread t2 = new Thread(new Runnable() { // EDİT
+            @Override
+            public void run() { 
+               for (int i=0;i<1000;i++){
                     try {
                         Thread.sleep(1000);
                         for(Animal a : transaction.bringAnimals()){
-                            System.out.println("Ben i :" + i);
-                            a.setProduct_status(1+a.getProduct_status());
-                            if(a.getYasamSuresi() < (System.currentTimeMillis()-startTime)/1000){
-                                transaction.deleteAnimal(a.getId());
-                                System.out.println(a.getId() + " " +a.getYasamSuresi()); 
-                                viewAnimal();
-                            }
-                            System.out.println(a.getProduct_status());
-                            System.out.println(farmCase.getMilk());
+                            //System.out.println("ben t2 isiyim : " + i);
+                            //Thread.sleep(10);
+                            //a.addProduct(i);
+                           // System.out.println(a.getProduct_status());
+                            
                             if(a.getProduct_status() > (100*a.getDeliveryTimeRandom())){
-                             farmCase.setMilk(i);
-                              System.out.println("Kasamdaki süt sayısı : " + farmCase.getMilk());
-                            if(a.getType().equals("Cow")){
-                                
+                                //farmCase.setMilk(i);
+                                System.out.println("Kasamdaki süt sayısı : " + farmCase.getMilk());
+                                 Thread.sleep(10);
+                                 a.setProduct_status(1);
                             }
-                             a.setProduct_status(1);
-                        }
                         }
                     } catch (Exception ex) {
                         System.out.println("HATAAA!" + ex.getMessage());
@@ -70,8 +114,10 @@ public class AnimalScreen extends javax.swing.JDialog {
        
         
         
-    });
+    });*/
+        
         t.start();
+        //t2.start();
         
     }
 
@@ -92,15 +138,21 @@ public class AnimalScreen extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        typeLine = new javax.swing.JTextField();
-        genderLine = new javax.swing.JTextField();
         ageLine = new javax.swing.JTextField();
-        productLine = new javax.swing.JTextField();
         addAnimal = new javax.swing.JButton();
         productStatusLabel = new javax.swing.JLabel();
         productStatusLine = new javax.swing.JTextField();
         deleteAnimal = new javax.swing.JButton();
         informationButton = new javax.swing.JButton();
+        Sell = new javax.swing.JButton();
+        Store = new javax.swing.JButton();
+        Eror = new javax.swing.JLabel();
+        TypeCombo = new javax.swing.JComboBox<>();
+        genderCombo = new javax.swing.JComboBox<>();
+        productCombo = new javax.swing.JComboBox<>();
+        jButton1 = new javax.swing.JButton();
+        cashlabel = new javax.swing.JLabel();
+        cashcount = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -163,7 +215,7 @@ public class AnimalScreen extends javax.swing.JDialog {
 
         productStatusLabel.setText("Üretim Durumu :");
 
-        deleteAnimal.setText("Hayvan Sil");
+        deleteAnimal.setText("Hayvan Sat");
         deleteAnimal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteAnimalActionPerformed(evt);
@@ -176,6 +228,38 @@ public class AnimalScreen extends javax.swing.JDialog {
                 informationButtonActionPerformed(evt);
             }
         });
+
+        Sell.setText("Satış");
+        Sell.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SellActionPerformed(evt);
+            }
+        });
+
+        Store.setText("Mağaza");
+
+        TypeCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "inek", "Tavuk", "Ari", " " }));
+        TypeCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                TypeComboİtemStateChanged(evt);
+            }
+        });
+        TypeCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TypeComboActionPerformed(evt);
+            }
+        });
+
+        genderCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Erkek", "Dişi" }));
+
+        productCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Süt", "Yumurta", "Bal" }));
+
+        jButton1.setText("Hayvan Al");
+
+        cashlabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cashlabel.setText("Kasa :");
+
+        cashcount.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -191,32 +275,45 @@ public class AnimalScreen extends javax.swing.JDialog {
                             .addComponent(jSeparator1))
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(productStatusLabel)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(typeLine, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                            .addComponent(genderLine)
                             .addComponent(ageLine)
-                            .addComponent(productLine))
+                            .addComponent(productStatusLine)
+                            .addComponent(TypeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(genderCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(productCombo, 0, 113, Short.MAX_VALUE))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(productStatusLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(productStatusLine)
-                                .addGap(52, 52, 52))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(39, 39, 39)
+                                .addComponent(Eror, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(addAnimal, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
-                                    .addComponent(deleteAnimal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(informationButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(40, 40, 40))))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(cashlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(cashcount, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(informationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                                        .addComponent(addAnimal, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                                        .addComponent(Store, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGap(26, 26, 26)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(deleteAnimal, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(Sell, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGap(0, 0, Short.MAX_VALUE))))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -228,26 +325,42 @@ public class AnimalScreen extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(typeLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addAnimal))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(genderLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deleteAnimal))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel3)
-                        .addComponent(ageLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(informationButton, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(productLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(productStatusLabel)
-                    .addComponent(productStatusLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                    .addComponent(addAnimal)
+                    .addComponent(deleteAnimal)
+                    .addComponent(TypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(informationButton)
+                            .addComponent(Sell))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(Store)
+                            .addComponent(jButton1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cashlabel)
+                            .addComponent(cashcount, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(34, 34, 34))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(genderCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(ageLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(productCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(15, 15, 15)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(productStatusLabel)
+                            .addComponent(productStatusLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Eror))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -267,35 +380,71 @@ public class AnimalScreen extends javax.swing.JDialog {
     }//GEN-LAST:event_searchbuttonKeyReleased
 
     private void addAnimalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAnimalActionPerformed
-       String type=typeLine.getText();
-       String gender=genderLine.getText();
-       String product= productLine.getText();
-       String product_status= productStatusLine.getText();
-       String age=ageLine.getText();
        
-       transaction.addAnimal(type,gender,age,product,product_status);
-       viewAnimal();
+       
+        try {
+            String type=TypeCombo.getSelectedItem().toString();
+            String gender=genderCombo.getSelectedItem().toString();
+            String product=productCombo.getSelectedItem().toString();
+            String age=ageLine.getText();
+            String product_status= productStatusLine.getText();
+            
+            if(transaction.addAnimal(type,gender,age,product,product_status)){System.out.println("İşlem Başarılı");}
+            else{Eror.setText("Gerekli Alanları Doldurunuz");}
+        } catch (Exception e) {
+            
+            System.out.println("TEkrar deneyiniz");
+            
+        } finally{
+            animals.clear();
+            animals=transaction.bringAnimals();
+            viewAnimal(animals);
+        }
+       
+       
+       
+       
        
     }//GEN-LAST:event_addAnimalActionPerformed
 
     private void deleteAnimalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteAnimalActionPerformed
         int selectedRow=animalTable.getSelectedRow();
         int id= (int) model.getValueAt(selectedRow, 0);
+        String str = (String)model.getValueAt(selectedRow, 1);
+        if(str.equals("inek")){
+            FarmCase.addCash(FarmCase.getCowPrice());
+            Eror.setText("İnek satıldı.");
+        }else if(str.equals("Tavuk")){
+            FarmCase.addCash(FarmCase.getChickenPrice());
+           Eror.setText("Tavuk satıldı.");
+        }else if(str.equals("Ari")){
+            FarmCase.addCash(FarmCase.getBeePrices());
+            Eror.setText("Arı satıldı.");
+        }
+        else{
+            FarmCase.addCash(1000);
+            Eror.setText("İnek satıldı.");
+            System.out.println(str);
+        }
+        
         transaction.deleteAnimal(id);
-        viewAnimal();
+        animals.clear();
+         animals=transaction.bringAnimals();
+        viewAnimal(animals);
+        
         
     }//GEN-LAST:event_deleteAnimalActionPerformed
 
     private void informationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_informationButtonActionPerformed
             int selectedRow=animalTable.getSelectedRow();
             int deliveryTime= (int) model.getValueAt(selectedRow, 5);
-            Animal animal = transaction.bringAnimals().get(selectedRow);
+            Animal animal = animals.get(selectedRow);
             //System.out.println(transaction.bringAnimals().get(selectedRow).getAge());
-           
+            key = false;
             //System.out.println(deliveryTime);
            ProgressBarScreen progressbar1 = new ProgressBarScreen(animal);
             
-            setVisible(false);
+            this.setVisible(false);
             
             //progressbar1.setVisible(true);
             //InformationPage.fill(deliveryTime);
@@ -304,15 +453,29 @@ public class AnimalScreen extends javax.swing.JDialog {
             
                 // TODO add your handling code here:
     }//GEN-LAST:event_informationButtonActionPerformed
+
+    private void SellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SellActionPerformed
+        SellScreen sellScreen=new SellScreen();
+        sellScreen.setVisible(true);
+        key=false;
+        setVisible(false);
+    }//GEN-LAST:event_SellActionPerformed
+
+    private void TypeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TypeComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TypeComboActionPerformed
+
+    private void TypeComboİtemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_TypeComboİtemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TypeComboİtemStateChanged
     
     /**
      * @param args the command line arguments
      */
-    public void viewAnimal(){
-        model.setRowCount(0);
-        ArrayList<Animal> animals= new ArrayList<Animal>();
+    public void viewAnimal(ArrayList<Animal> animals){
         
-        animals=transaction.bringAnimals();
+        model.setRowCount(0);
+        cashcount.setText(FarmCase.getCash()+"TL");
         if (animals != null){
             for (Animal animal:animals){
                 Object[] add={animal.getId(),animal.getType(),animal.getGender(),animal.getAge(),animal.getProduct(),animal.getProduct_status()};
@@ -324,22 +487,28 @@ public class AnimalScreen extends javax.swing.JDialog {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel Eror;
+    private javax.swing.JButton Sell;
+    private javax.swing.JButton Store;
+    private javax.swing.JComboBox<String> TypeCombo;
     private javax.swing.JButton addAnimal;
     private javax.swing.JTextField ageLine;
     private javax.swing.JTable animalTable;
+    private javax.swing.JLabel cashcount;
+    private javax.swing.JLabel cashlabel;
     private javax.swing.JButton deleteAnimal;
-    private javax.swing.JTextField genderLine;
+    private javax.swing.JComboBox<String> genderCombo;
     private javax.swing.JButton informationButton;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextField productLine;
+    private javax.swing.JComboBox<String> productCombo;
     private javax.swing.JLabel productStatusLabel;
     private javax.swing.JTextField productStatusLine;
     private javax.swing.JTextField searchbutton;
-    private javax.swing.JTextField typeLine;
     // End of variables declaration//GEN-END:variables
 }

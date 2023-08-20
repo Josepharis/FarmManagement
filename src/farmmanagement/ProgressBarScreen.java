@@ -10,7 +10,9 @@ import java.awt.image.ComponentColorModel;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -24,7 +26,7 @@ public class ProgressBarScreen extends javax.swing.JFrame {
     public ProgressBarScreen(Animal animal) {
         
         initComponents();
-        
+      
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -40,11 +42,29 @@ public class ProgressBarScreen extends javax.swing.JFrame {
                        Logger.getLogger(ProgressBarScreen.class.getName()).log(Level.SEVERE, null, ex);
                    }
                    deliveryTime++;
-                   if(deliveryTime == 100){
-                       deliveryTime = 1;
-                       JOptionPane.showMessageDialog(null,"Ürün kasanıza eklendi");
+                   if(deliveryTime > 100){
+                       animal.setProduct_status(deliveryTime%100);
+                       deliveryTime = deliveryTime%100;
+                       if(animal.getType().equals("inek")){
+                           Done.setText(animal.getProduct()+" Deponuza Eklendi.");
+                         FarmCase.addMilk(1);
+                       }else if(animal.getType().equals("Ari")){
+                           Done.setText(animal.getProduct()+" Deponuza Eklendi.");
+                            FarmCase.addHoney(1);
+                       }else{
+                           Done.setText(animal.getProduct()+" Deponuza Eklendi.");
+                            FarmCase.addEgg(1);
+                      }
+                       
+                       
+                       
+                   }
+                   if(deliveryTime==5){
+                       Done.setText("Ürün Üretiliyor");
                    }
                }
+               
+               
                /*for (int i=deliveryTime;i<100;i++){
                    
                     try {
@@ -78,6 +98,7 @@ public class ProgressBarScreen extends javax.swing.JFrame {
         progressBar1 = new javax.swing.JProgressBar();
         sellButton = new javax.swing.JButton();
         Back = new javax.swing.JButton();
+        Done = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -90,18 +111,24 @@ public class ProgressBarScreen extends javax.swing.JFrame {
             }
         });
 
+        Done.setFont(new java.awt.Font("Segoe UI Black", 1, 24)); // NOI18N
+        Done.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(sellButton, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(240, 240, 240)
-                        .addComponent(sellButton, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(86, 86, 86)
-                        .addComponent(progressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(progressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
+                            .addComponent(Done, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(Back, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -114,56 +141,29 @@ public class ProgressBarScreen extends javax.swing.JFrame {
                 .addComponent(Back, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(144, 144, 144)
                 .addComponent(progressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(30, 30, 30)
+                .addComponent(Done, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
                 .addComponent(sellButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(164, Short.MAX_VALUE))
+                .addGap(20, 20, 20))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void BackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackActionPerformed
-        // TODO add your handling code here:
+        this.dispose();
+       AnimalScreen.key = true;
     }//GEN-LAST:event_BackActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ProgressBarScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ProgressBarScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ProgressBarScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ProgressBarScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ProgressBarScreen().setVisible(true);
-            }
-        });
-        
-    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Back;
+    private javax.swing.JLabel Done;
     public javax.swing.JProgressBar progressBar1;
     private javax.swing.JButton sellButton;
     // End of variables declaration//GEN-END:variables

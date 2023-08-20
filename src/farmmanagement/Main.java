@@ -10,7 +10,7 @@ package farmmanagement;
  */
 public class Main {
      public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
+        /* ıııııııı the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
@@ -36,7 +36,7 @@ public class Main {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AnimalScreen dialog = new AnimalScreen(new javax.swing.JFrame(), true);
+                AnimalScreen dialog = new AnimalScreen();
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
