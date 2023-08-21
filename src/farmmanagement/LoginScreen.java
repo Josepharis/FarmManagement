@@ -71,7 +71,7 @@ public class LoginScreen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void loginbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginbuttonActionPerformed
-              AnimalScreen animalScreen=new AnimalScreen(this, true);
+              AnimalScreen animalScreen=new AnimalScreen();
               setVisible(false);
               animalScreen.setVisible(true);
               System.exit(0);

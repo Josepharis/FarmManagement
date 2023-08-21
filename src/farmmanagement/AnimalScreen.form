@@ -64,11 +64,8 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="cashcount" pref="85" max="32767" attributes="0"/>
                                   </Group>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="informationButton" pref="132" max="32767" attributes="0"/>
-                                      <Component id="addAnimal" pref="132" max="32767" attributes="0"/>
-                                      <Component id="Store" alignment="0" max="32767" attributes="0"/>
-                                  </Group>
+                                  <Component id="informationButton" pref="132" max="32767" attributes="0"/>
+                                  <Component id="addAnimal" pref="132" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -113,10 +110,7 @@
                           <Component id="Sell" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="Store" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="cashlabel" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -282,11 +276,6 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SellActionPerformed"/>
       </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="Store">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Ma&#x11f;aza"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="Eror">
     </Component>

@@ -145,7 +145,6 @@ public class AnimalScreen extends javax.swing.JDialog {
         deleteAnimal = new javax.swing.JButton();
         informationButton = new javax.swing.JButton();
         Sell = new javax.swing.JButton();
-        Store = new javax.swing.JButton();
         Eror = new javax.swing.JLabel();
         TypeCombo = new javax.swing.JComboBox<>();
         genderCombo = new javax.swing.JComboBox<>();
@@ -236,8 +235,6 @@ public class AnimalScreen extends javax.swing.JDialog {
             }
         });
 
-        Store.setText("Mağaza");
-
         TypeCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "inek", "Tavuk", "Ari", " " }));
         TypeCombo.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -300,10 +297,8 @@ public class AnimalScreen extends javax.swing.JDialog {
                                         .addComponent(cashlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(cashcount, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(informationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
-                                        .addComponent(addAnimal, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
-                                        .addComponent(Store, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addComponent(informationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                                    .addComponent(addAnimal, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
                                 .addGap(26, 26, 26)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -335,9 +330,7 @@ public class AnimalScreen extends javax.swing.JDialog {
                             .addComponent(informationButton)
                             .addComponent(Sell))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(Store)
-                            .addComponent(jButton1))
+                        .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cashlabel)
@@ -489,7 +482,6 @@ public class AnimalScreen extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Eror;
     private javax.swing.JButton Sell;
-    private javax.swing.JButton Store;
     private javax.swing.JComboBox<String> TypeCombo;
     private javax.swing.JButton addAnimal;
     private javax.swing.JTextField ageLine;
